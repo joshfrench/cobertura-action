@@ -8,32 +8,16 @@ const dummyReport = {
   branch: 0,
   files: [
     {
-      name: "ClassFoo",
       filename: "__init__.py",
       total: 80,
-      line: 80,
-      branch: 0,
-      missing: [["24", "26"]],
     },
     {
-      name: "ClassBar",
       filename: "bar.py",
       total: 75,
-      line: 80,
-      branch: 0,
-      missing: [
-        ["23", "24"],
-        ["39", "40"],
-        ["50", "50"],
-      ],
     },
     {
-      name: "ClassMoo",
       filename: "foo.py",
       total: 75,
-      line: 100,
-      branch: 75,
-      missing: [],
     },
   ],
 };

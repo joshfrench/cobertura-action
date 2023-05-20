@@ -1,7 +1,7 @@
 const core = require("@actions/core");
 const github = require("@actions/github");
 const { escapeMarkdown } = require("./utils");
-const { processCoverage } = require("./cobertura");
+const { processCoverage } = require("./gocover");
 
 const client = new github.getOctokit(
   core.getInput("repo_token", { required: true })
@@ -19,33 +19,12 @@ async function action(payload) {
   const skipCovered = JSON.parse(
     core.getInput("skip_covered", { required: true })
   );
-  const showLine = JSON.parse(core.getInput("show_line", { required: true }));
-  const showBranch = JSON.parse(
-    core.getInput("show_branch", { required: true })
-  );
   const minimumCoverage = parseInt(
     core.getInput("minimum_coverage", { required: true })
   );
   const failBelowThreshold = JSON.parse(
     core.getInput("fail_below_threshold", { required: false }) || "false"
   );
-  const showClassNames = JSON.parse(
-    core.getInput("show_class_names", { required: true })
-  );
-  const showMissing = JSON.parse(
-    core.getInput("show_missing", { required: true })
-  );
-  let showMissingMaxLength = core.getInput("show_missing_max_length", {
-    required: false,
-  });
-  showMissingMaxLength = showMissingMaxLength
-    ? parseInt(showMissingMaxLength)
-    : -1;
-  const linkMissingLines = JSON.parse(
-    core.getInput("link_missing_lines", { required: false }) || "false"
-  );
-  const linkMissingLinesSourceDir =
-    core.getInput("link_missing_lines_source_dir", { required: false }) || null;
   const onlyChangedFiles = JSON.parse(
     core.getInput("only_changed_files", { required: true })
   );
@@ -58,13 +37,6 @@ async function action(payload) {
   const reports = await processCoverage(path, { skipCovered });
   const comment = markdownReport(reports, commit, {
     minimumCoverage,
-    showLine,
-    showBranch,
-    showClassNames,
-    showMissing,
-    showMissingMaxLength,
-    linkMissingLines,
-    linkMissingLinesSourceDir,
     filteredFiles: changedFiles,
     reportName,
   });
@@ -182,11 +154,11 @@ function markdownReport(reports, commit, options) {
         status(fileTotal),
         showMissing && file.missing
           ? formatMissingLines(
-              formatFileUrl(linkMissingLinesSourceDir, file.filename, commit),
-              file.missing,
-              showMissingMaxLength,
-              linkMissingLines
-            )
+            formatFileUrl(linkMissingLinesSourceDir, file.filename, commit),
+            file.missing,
+            showMissingMaxLength,
+            linkMissingLines
+          )
           : undefined,
       ]);
     }
