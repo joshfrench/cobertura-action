@@ -3,6 +3,8 @@ const fs = require("fs").promises;
 const glob = require("glob-promise");
 const readline = require("readline");
 
+const pct = str => parseFloat(str.match(/([0-9]+.[0-9]+)%/)[1], 10)
+
 /**
  * generate the report for the given file
  *
@@ -18,7 +20,6 @@ async function readCoverageFromFile(path, options) {
     crlfDelay: Infinity,
   });
 
-  var total;
   const files = [];
 
   for await (const line of rl) {
@@ -36,37 +37,11 @@ async function readCoverageFromFile(path, options) {
             total: 0.0
           });
         break;
-      case 'total:':
-        total = pct(line);
-        break;
     }
   }
-  /* const xml = await fs.readFile(path, "utf-8");
-  const { coverage } = await parseString(xml, {
-    explicitArray: false,
-    mergeAttrs: true,
-  });
-  const { packages } = coverage;
-  const classes = processPackages(packages);
-  const files = classes
-    .filter(Boolean)
-    .map((klass) => {
-      return {
-        ...calculateRates(klass),
-        filename: klass["filename"],
-        name: klass["name"],
-        missing: missingLines(klass),
-      };
-    })
-    .filter((file) => options.skipCovered === false || file.total < 100);
-  return {
-    ...calculateRates(coverage),
-    files,
-  }; */
+  const total = files.reduce((acc, curr) => acc + curr.total, 0) / files.length;
   return { total, files };
 }
-
-const pct = str => parseFloat(str.match(/([0-9]+.[0-9]+)%/)[1], 10)
 
 /**
  *
