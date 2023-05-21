@@ -39,6 +39,9 @@ async function readCoverageFromFile(path, options) {
         break;
     }
   }
+  // we *could* also run `go tool cover|covdata func ...` to get the total
+  // % of statements covered, but we don't currently output per-statement
+  // stats so it seems unnecessary. Just calculate the total by package.
   const total = files.reduce((acc, curr) => acc + curr.total, 0) / files.length;
   return { total, files };
 }
