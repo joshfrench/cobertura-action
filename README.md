@@ -1,23 +1,29 @@
-# Cobertura action
+# Go Covdata action
 
-![](https://github.com/5monkeys/cobertura-action/workflows/Test/badge.svg)
+A fork of 5monkeys/cobertura-action that just parses the raw output of Go's built-in coverage tool. Since this tool does not output line or branch statistics, converting it to XML and running it through Cobertura doesn't provide much extra info. The end result is almost identical to the text output of `go test -cover`.
 
-GitHub Action which parse a [XML cobertura report](http://cobertura.github.io/cobertura/) and display the metrics in a GitHub Pull Request.
+This action requires a project running Go 1.20 or later, as this is when the `covdata` tool was introduced. To create the raw output in the right format, run your tests with the following commands:
 
-Many coverage tools can be configured to output cobertura reports:
+`$ go test ./... -v -cover -test.gocoverdir="$PWD/coverage" -coverpkg=./...`
 
-* [coverage.py](https://coverage.readthedocs.io/en/latest/cmd.html#xml-reporting)
-* [Istanbul](https://istanbul.js.org/docs/advanced/alternative-reporters/#cobertura)
-* [Maven](https://www.mojohaus.org/cobertura-maven-plugin/)
-* [simplecov](https://github.com/colszowka/simplecov/blob/master/doc/alternate-formatters.md#simplecov-cobertura)
+| Argument         | Meaning                                                       |
+| ---------------- | ------------------------------------------------------------- |
+| -v               | verbose (nice for CI)                                         |
+| -cover           | generate coverage                                             |
+| -test.gocoverdir | save coverage profiles to this directory                      |
+| -coverpkg        | `./...`: consider all packages, even those without test files |
 
-This action will not currently work when triggered by pull requests from forks, like is common in open source projects.
-This is because the token for forked pull request workflows does not have write permissions on the target repository.
-Hopefully GitHub will have a solution for this in the future. In the meantime one can use utilize multiple workflows and
-artifacts to circumvent this. See the workflows in this project for an implementation example and this blog post https://securitylab.github.com/research/github-actions-preventing-pwn-requests.
+`$ go tool covdata percent -i coverage > coverage/percent`
 
+| Argument | Meaning                                      |
+| -------- | -------------------------------------------- |
+| covdata  | parse previously generated coverage profiles |
+| percent  | report coverage percentage by package        |
+| -i       | input directory where profiles are located   |
 
-## How it looks like
+The directory where you place you coverage profile and filename of the ultimate report are up to you; just be sure to pass it as the action's `path` input.
+
+## What it looks like
 
 A comment is added to the pull request with the coverage report.
 
@@ -37,7 +43,7 @@ The GITHUB_TOKEN. Defaults to `${{github.token}}`
 
 ### `path`
 
-The path to the cobertura report. Defaults to `coverage.xml`. Glob pattern is supported, for example `coverage/*.xml`.
+The path to the percentage report. Defaults to `coverage/percent`. Glob pattern is supported, for example `coverage/*.txt`.
 
 ### `skip_covered`
 
@@ -50,40 +56,6 @@ The minimum allowed coverage percentage as an integer.
 ### `fail_below_threshold`
 
 Fail the action when the minimum coverage was not met.
-
-### `show_line`
-
-Show line rate as specific column.
-
-### `show_branch`
-
-Show branch rate as specific column.
-
-### `show_class_names`
-
-Show class names instead of file names.
-
-### `show_missing`
-
-Show line numbers of statements, per module, that weren't executed.
-
-### `show_missing_max_length`
-
-Crop missing line numbers strings that exceeds this length, provided as an integer.
-
-Default is no crop.
-
-(Note: "&hellip;" is appended to a cropped string)
-
-### `link_missing_lines`
-
-Link missing line numbers. This only has an effect when `show_missing` is set to `true`.
-Defaults to `false`.
-
-### `link_missing_lines_source_dir`
-
-Allows specifying a source directory for `link_missing_lines`, that will be inserted
-into the resulting URLs, in-between the commit hash and the file path.
 
 ### `only_changed_files`
 
@@ -111,9 +83,9 @@ jobs:
   coverage:
     runs-on: ubuntu-latest
     steps:
-      - uses: 5monkeys/cobertura-action@master
+      - uses: joshfrench/covdata-percent@master
         with:
-          path: src/test.xml
+          path: coverage/percent
           minimum_coverage: 75
 ```
 

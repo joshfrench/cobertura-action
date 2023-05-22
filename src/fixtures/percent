@@ -1,0 +1,4 @@
+	github.com/foo/bar/foo	[no statements]
+	github.com/foo/bar/bar	coverage: 67.0% of statements
+	github.com/foo/bar/baz	coverage: 0.0% of statements
+	github.com/foo/bar/qux	coverage: 78.4% of statements
