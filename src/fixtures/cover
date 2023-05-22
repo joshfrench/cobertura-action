@@ -1,4 +1,0 @@
-?   	foo.go	[no test files]
-ok  	bar.go	0.353s	coverage: 67.0% of statements
-ok  	baz.go	0.641s	coverage: 0.0% of statements
-ok  	qux.go	0.641s	coverage: 78.4% of statements

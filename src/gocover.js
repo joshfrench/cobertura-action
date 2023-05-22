@@ -1,9 +1,9 @@
-const events = require("events");
-const fs = require("fs").promises;
+const fs = require("fs");
 const glob = require("glob-promise");
 const readline = require("readline");
 
-const pct = str => parseFloat(str.match(/([0-9]+.[0-9]+)%/)[1], 10)
+const filename = str => str.match(/\S+/) && RegExp.lastMatch
+const percent = str => str.match(/([0-9]+.[0-9]+)%/) && parseFloat(RegExp.lastMatch, 10) || 0
 
 /**
  * generate the report for the given file
@@ -13,8 +13,7 @@ const pct = str => parseFloat(str.match(/([0-9]+.[0-9]+)%/)[1], 10)
  * @return {Promise<{total: number, files: T[]}>}
  */
 async function readCoverageFromFile(path, options) {
-  const file = await fs.open(path);
-  const fileStream = file.createReadStream(path);
+  const fileStream = fs.createReadStream(path);
   const rl = readline.createInterface({
     input: fileStream,
     crlfDelay: Infinity,
@@ -23,26 +22,13 @@ async function readCoverageFromFile(path, options) {
   const files = [];
 
   for await (const line of rl) {
-    const [result, filename, time, coverage] = line.split("\t");
-    switch (result.trim()) {
-      case 'ok':
-        files.push({
-          filename,
-          total: pct(coverage)
-        })
-        break;
-      case '?':
-          files.push({
-            filename,
-            total: 0.0
-          });
-        break;
-    }
+    files.push({
+      filename: filename(line),
+      total: percent(line)
+    })
   }
-  // we *could* also run `go tool cover|covdata func ...` to get the total
-  // % of statements covered, but we don't currently output per-statement
-  // stats so it seems unnecessary. Just calculate the total by package.
   const total = files.reduce((acc, curr) => acc + curr.total, 0) / files.length;
+  // TODO: filter files
   return { total, files };
 }
 

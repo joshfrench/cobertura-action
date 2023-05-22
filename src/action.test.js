@@ -29,7 +29,7 @@ beforeEach(() => {
 
 test("action", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -54,7 +54,7 @@ test("action", async () => {
 
 test("action triggered by workflow event", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -86,7 +86,7 @@ test("action triggered by workflow event", async () => {
 
 test("action triggered by push", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -103,7 +103,7 @@ test("action triggered by push", async () => {
     output: {
       title: "coverage",
       summary:
-        '<strong></strong>\n\n| File | Coverage |   |\n| - | :-: | :-: |\n| **All files** | `36%` | :x: |\n| foo.go | `0%` | :x: |\n| bar.go | `67%` | :x: |\n| baz.go | `0%` | :x: |\n| qux.go | `78%` | :x: |\n\n_Minimum allowed coverage is `100%`_\n\n<p align="right">Generated with go test -cover against decafbad </p>',
+        '<strong></strong>\n\n| File | Coverage |   |\n| - | :-: | :-: |\n| **All files** | `36%` | :x: |\n| github.com/foo/bar/foo | `0%` | :x: |\n| github.com/foo/bar/bar | `67%` | :x: |\n| github.com/foo/bar/baz | `0%` | :x: |\n| github.com/foo/bar/qux | `78%` | :x: |\n\n_Minimum allowed coverage is `100%`_\n\n<p align="right">Generated with go test -cover against decafbad </p>',
     },
   };
   nock("https://api.github.com")
@@ -117,7 +117,7 @@ test("action triggered by push", async () => {
 test("action passing pull request number directly", async () => {
   const { action } = require("./action");
   const prNumber = 123;
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -146,7 +146,7 @@ test("action passing pull request number directly", async () => {
 
 test("action only changes", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -178,7 +178,7 @@ test("action only changes", async () => {
 
 test("action with report name", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -210,7 +210,7 @@ test("action with report name", async () => {
 
 test("action with crop missing lines", async () => {
   const { action } = require("./action");
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -237,7 +237,7 @@ test("action with crop missing lines", async () => {
 test("action failing on coverage below threshold", async () => {
   const { action } = require("./action");
   const prNumber = 123;
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
@@ -274,7 +274,7 @@ test("action failing on coverage below threshold", async () => {
 test("action not failing on coverage above threshold", async () => {
   const { action } = require("./action");
   const prNumber = 123;
-  process.env["INPUT_PATH"] = "./src/fixtures/*";
+  process.env["INPUT_PATH"] = "./src/fixtures/percent";
   process.env["INPUT_SKIP_COVERED"] = "true";
   process.env["INPUT_SHOW_BRANCH"] = "false";
   process.env["INPUT_SHOW_LINE"] = "false";
